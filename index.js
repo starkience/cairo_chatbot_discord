@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const { Client, GatewayIntentBits } = require('discord.js');
 const axios = require('axios');
-const token = process.env.DISCORD_BOT_TOKEN; // Load the token from environment variables
+const token = process.env.DISCORD_BOT_TOKEN;
 
 console.log(`discord.js version: ${require('discord.js').version}`);
 console.log(`axios version: ${require('axios').VERSION}`);
@@ -33,7 +33,6 @@ client.on('messageCreate', async message => {
 
     console.log(`User query: ${userQuery}`);
 
-    // Let the user know their request is being processed
     const processingMessage = await message.channel.send('Your request is being processed...');
 
     try {
@@ -44,29 +43,23 @@ client.on('messageCreate', async message => {
 
       console.log('Full API response:', JSON.stringify(response.data, null, 2));
 
-      const chatbotReply = response.data;
+      let chatbotReply = response.data;
+      if (typeof chatbotReply !== 'string') {
+        chatbotReply = JSON.stringify(chatbotReply);
+      }
 
       if (chatbotReply && chatbotReply.trim()) {
         console.log('Chatbot reply:', chatbotReply);
 
-        const maxMessageLength = 2000;
-        if (chatbotReply.length > maxMessageLength) {
-          const chunks = chatbotReply.match(new RegExp(`.{1,${maxMessageLength}}`, 'g'));
-          for (const chunk of chunks) {
-            await message.reply(chunk);
-          }
-        } else {
-          message.reply(chatbotReply);
-        }
+        await message.reply(chatbotReply);
       } else {
         console.log('Invalid chatbot reply:', chatbotReply);
-        message.reply('The Cairo chatbot did not provide a valid response. Please try again.');
+        await message.reply('The Cairo chatbot did not provide a valid response. Please try again.');
       }
     } catch (error) {
       console.error('Error interacting with the Cairo chatbot:', error);
-      message.reply('There was an error interacting with the Cairo chatbot. Please try again later.');
+      await message.reply('There was an error interacting with the Cairo chatbot. Please try again later.');
     } finally {
-      // Delete the processing message
       processingMessage.delete();
     }
   }
