@@ -33,6 +33,9 @@ client.on('messageCreate', async message => {
 
     console.log(`User query: ${userQuery}`);
 
+    // Let the user know their request is being processed
+    const processingMessage = await message.channel.send('Your request is being processed...');
+
     try {
       const response = await axios.post('https://cairo-chatbot.vercel.app/api/chat', {
         messages: [{ "role": "user", "content": userQuery }],
@@ -62,6 +65,9 @@ client.on('messageCreate', async message => {
     } catch (error) {
       console.error('Error interacting with the Cairo chatbot:', error);
       message.reply('There was an error interacting with the Cairo chatbot. Please try again later.');
+    } finally {
+      // Delete the processing message
+      processingMessage.delete();
     }
   }
 });
