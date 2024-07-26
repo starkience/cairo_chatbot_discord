@@ -3,6 +3,7 @@ require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const axios = require('axios');
 const token = process.env.DISCORD_BOT_TOKEN;
+const stressBotId = process.env.STRESS_BOT_ID;
 
 console.log(`discord.js version: ${require('discord.js').version}`);
 console.log(`axios version: ${require('axios').VERSION}`);
@@ -20,7 +21,7 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', async message => {
-  if (message.author.bot) return;
+  if (message.author.bot && message.author.id !== stressBotId) return;
 
   console.log(`Received message: ${message.content}`);
 
@@ -43,22 +44,19 @@ client.on('messageCreate', async message => {
 
       console.log('Full API response:', JSON.stringify(response.data, null, 2));
 
-      let chatbotReply = response.data;
-      if (typeof chatbotReply !== 'string') {
-        chatbotReply = JSON.stringify(chatbotReply);
-      }
+      const chatbotReply = response.data;
 
-      if (chatbotReply && chatbotReply.trim()) {
+      if (chatbotReply && typeof chatbotReply === 'string' && chatbotReply.trim()) {
         console.log('Chatbot reply:', chatbotReply);
 
-        await message.reply(chatbotReply);
+        message.reply(chatbotReply);
       } else {
         console.log('Invalid chatbot reply:', chatbotReply);
-        await message.reply('The Cairo chatbot did not provide a valid response. Please try again.');
+        message.reply('The Cairo chatbot did not provide a valid response. Please try again.');
       }
     } catch (error) {
       console.error('Error interacting with the Cairo chatbot:', error);
-      await message.reply('There was an error interacting with the Cairo chatbot. Please try again later.');
+      message.reply('There was an error interacting with the Cairo chatbot. Please try again later.');
     } finally {
       processingMessage.delete();
     }
