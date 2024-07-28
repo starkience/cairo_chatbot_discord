@@ -24,10 +24,9 @@ client.on('messageCreate', async message => {
 
   console.log(`Received message: ${message.content}`);
 
-  // Check if the message is in the allowed channel
-  const allowedChannelId = '1265949221258002537';
-  if (message.channel.id !== allowedChannelId) {
-    message.reply('Please post your request in the #cairo-questions channel');
+  const allowedChannelIds = ['793094838987128844', '1195202212750696458', '1065544063245365288'];
+  if (!allowedChannelIds.includes(message.channel.id)) {
+    message.reply('Please post your request in the #dev-help, #basecamp, or #cairo channels');
     return;
   }
 
