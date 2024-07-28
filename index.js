@@ -24,6 +24,13 @@ client.on('messageCreate', async message => {
 
   console.log(`Received message: ${message.content}`);
 
+  // Check if the message is in the allowed channel
+  const allowedChannelId = '1265949221258002537';
+  if (message.channel.id !== allowedChannelId) {
+    message.reply('Please post your request in the #cairo-questions channel');
+    return;
+  }
+
   if (message.content.startsWith('!cairo')) {
     const userQuery = message.content.slice(7).trim();
     if (!userQuery) {
@@ -66,4 +73,3 @@ client.on('messageCreate', async message => {
 });
 
 client.login(token);
-
