@@ -24,7 +24,8 @@ client.on('messageCreate', async message => {
 
   console.log(`Received message: ${message.content}`);
 
-  const allowedChannelIds = ['793094838987128844', '1195202212750696458', '1065544063245365288'];
+  // Updated to only include the new channel ID
+  const allowedChannelIds = ['1267471383697428560'];
   if (!allowedChannelIds.includes(message.channel.id)) {
     return;
   }
